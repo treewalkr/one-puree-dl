@@ -28,3 +28,16 @@ export async function extractStreamUrl(episodeId: number): Promise<StreamInfo> {
     referer: `${BASE_URL}/`,
   };
 }
+
+export function parseEpisodeIdFromUrl(url: string): number {
+  const match = url.match(/\/episode\/(\d+)/);
+  if (!match) {
+    throw new Error(`Cannot extract episode ID from URL: ${url}`);
+  }
+  return parseInt(match[1]!, 10);
+}
+
+export async function extractStreamUrlFromPage(url: string): Promise<StreamInfo> {
+  const episodeId = parseEpisodeIdFromUrl(url);
+  return extractStreamUrl(episodeId);
+}
