@@ -1,4 +1,4 @@
-import { parseIframeData, decodeStreamUrl } from "./parser";
+import { parseIframeData, decodeStreamUrl, parseEpisodeTitle } from "./parser";
 import type { StreamInfo } from "./types";
 
 const BASE_URL = "https://opuree.com";
@@ -12,12 +12,18 @@ export async function extractStreamUrl(episodeId: number): Promise<StreamInfo> {
   }
 
   const html = await res.text();
+  const title = parseEpisodeTitle(html);
+
+  if (title.includes("404") && title.includes("not found")) {
+    throw new Error(`Episode ${episodeId} not found`);
+  }
+
   const base64Data = parseIframeData(html);
   const hlsUrl = decodeStreamUrl(base64Data);
 
   return {
     episodeId,
-    title: `Episode ${episodeId}`,
+    title,
     hlsUrl,
     referer: `${BASE_URL}/`,
   };

@@ -24,3 +24,8 @@ export function decodeStreamUrl(base64Data: string): string {
   }
   return decoded;
 }
+
+export function parseEpisodeTitle(html: string): string {
+  const $ = cheerio.load(html);
+  return $("title").text().trim();
+}
