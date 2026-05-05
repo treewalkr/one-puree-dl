@@ -1,5 +1,7 @@
+import { resolve } from "node:path";
 import { Command } from "commander";
 import { extractStreamUrl } from "./extractor";
+import { downloadSegments } from "./downloader";
 
 const program = new Command();
 
@@ -7,8 +9,10 @@ program
   .name("one-puree-dl")
   .description("Extract HLS video stream URLs from opuree.com episode pages")
   .argument("<episode>", "Episode number")
+  .option("-d, --download", "Download video to mp4")
+  .option("-o, --output <path>", "Output file path")
   .option("--json", "Output as JSON")
-  .action(async (episode: string, options: { json?: boolean }) => {
+  .action(async (episode: string, options: { download?: boolean; output?: string; json?: boolean }) => {
     const id = parseInt(episode, 10);
     if (isNaN(id)) {
       console.error(`Invalid episode number: ${episode}`);
@@ -23,6 +27,11 @@ program
       } else {
         console.log(`Episode ${info.episodeId}: ${info.title}`);
         console.log(`  HLS URL: ${info.hlsUrl}`);
+      }
+
+      if (options.download) {
+        const outputPath = options.output ? resolve(options.output) : resolve(`episode-${id}.mp4`);
+        await downloadSegments(info.hlsUrl, info.referer, outputPath);
       }
     } catch (err) {
       console.error(`Error: ${err instanceof Error ? err.message : err}`);
