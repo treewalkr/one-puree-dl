@@ -4,10 +4,6 @@
   "module": "src/index.ts",
   "type": "module",
   "private": true,
-  "scripts": {
-    "dev": "bun run src/cli.ts",
-    "build": "bun build src/index.ts --outdir=dist --target=bun"
-  },
   "bin": {
     "one-puree-dl": "src/cli.ts"
   },
@@ -21,7 +17,8 @@
     "commander": "^14.0.3"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.14"
+    "@types/bun": "^1.3.14",
+    "vitest": "^4.1.6"
   },
   "peerDependencies": {
     "typescript": "^5"
