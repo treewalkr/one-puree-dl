@@ -1,6 +1,6 @@
 # one-puree-dl
 
-A TypeScript library for extracting direct HLS video stream URLs from [opuree.com](https://opuree.com) episode pages. Automatically bypasses all pre-roll VAST ads by extracting the raw stream URL without loading the ad-enabled player.
+A TypeScript library for extracting direct HLS video stream URLs from a Thai anime streaming site's episode pages. Automatically bypasses all pre-roll VAST ads by extracting the raw stream URL without loading the ad-enabled player.
 
 ## How It Works
 
