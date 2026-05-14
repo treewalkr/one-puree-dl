@@ -1,17 +1,23 @@
+import { execSync } from "node:child_process";
 import { parseIframeData, decodeStreamUrl, parseEpisodeTitle } from "./parser";
 import type { StreamInfo } from "./types";
 
 const BASE_URL = "https://opuree.com";
 
+// Bun's TLS fingerprint causes the CDN to generate an invalid stream hash.
+// Use curl to fetch the page HTML instead.
+function fetchPageHtml(url: string): string {
+  return execSync(`curl -s --fail "${url}"`, { encoding: "utf-8" });
+}
+
 export async function extractStreamUrl(episodeId: number): Promise<StreamInfo> {
   const url = `${BASE_URL}/episode/${episodeId}`;
-  const res = await fetch(url);
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch episode page: HTTP ${res.status}`);
+  let html: string;
+  try {
+    html = fetchPageHtml(url);
+  } catch {
+    throw new Error(`Failed to fetch episode page: ${url}`);
   }
-
-  const html = await res.text();
   const title = parseEpisodeTitle(html);
 
   if (title.includes("404") && title.includes("not found")) {
